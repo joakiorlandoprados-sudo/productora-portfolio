@@ -1,13 +1,41 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
+datasource db {
+  provider = "postgresql"
+  // En Prisma 7 la URL de conexion ya no va aca - vive en prisma.config.ts
+}
 
 generator client {
   provider = "prisma-client"
   output   = "../app/generated/prisma"
 }
 
-datasource db {
-  provider = "postgresql"
+model Usuario {
+  id       String   @id @default(cuid())
+  usuario  String   @unique // "Admindev", "Augusto", "Alfredo" - no son emails
+  password String   // hash bcrypt, nunca texto plano
+  creadoEn DateTime @default(now())
+}
+
+model Trabajo {
+  id          String   @id @default(cuid())
+  titulo      String
+  slug        String   @unique
+  cliente     String?  // ej: "Boda Fulano", null si es contenido propio de viaje
+  tipo        String   // ej: "Foto", "Video", "Foto y Video"
+  descripcion String?
+  portada     String   // URL de Cloudinary
+  destacado   Boolean  @default(false)
+  publicado   Boolean  @default(true)
+  orden       Int      @default(0)
+  creadoEn    DateTime @default(now())
+  media       Media[]
+}
+
+model Media {
+  id        String   @id @default(cuid())
+  trabajoId String
+  trabajo   Trabajo  @relation(fields: [trabajoId], references: [id], onDelete: Cascade)
+  tipo      String   // "imagen" | "video"
+  url       String   // URL de Cloudinary
+  orden     Int      @default(0)
+  creadoEn  DateTime @default(now())
 }
