@@ -22,7 +22,6 @@ model Trabajo {
   cliente     String?  // ej: "Boda Fulano", null si es contenido propio de viaje
   tipo        String   // ej: "Foto", "Video", "Foto y Video"
   descripcion String?
-  portada     String   // URL de Cloudinary
   destacado   Boolean  @default(false)
   publicado   Boolean  @default(true)
   orden       Int      @default(0)
@@ -36,6 +35,7 @@ model Media {
   trabajo   Trabajo  @relation(fields: [trabajoId], references: [id], onDelete: Cascade)
   tipo      String   // "imagen" | "video"
   url       String   // URL de Cloudinary
-  orden     Int      @default(0)
+  publicId  String   // id de Cloudinary, necesario para poder borrar el asset
+  orden     Int      @default(0) // el de orden mas bajo se usa como portada
   creadoEn  DateTime @default(now())
 }
